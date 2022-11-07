@@ -20,13 +20,7 @@ public class Room : MonoBehaviour
 
     private List<Border> doorways;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        this.CreateRoom();
-    }
-
-    private void CreateRoom()
+    public void CreateRoom()
     {
         this.doorways = new List<Border>();
 
@@ -120,9 +114,15 @@ public class Room : MonoBehaviour
 
     private void CreateDoorway(List<Border> wallObjects)
     {
-        int centerIndex = Mathf.RoundToInt(this.roomData.roomDimensions.x / 2.0f) - 1;
-        int deviation = Mathf.RoundToInt(this.roomData.roomDimensions.x / 4.0f);
+        int centerIndex = Mathf.RoundToInt(wallObjects.Count / 2.0f) - 1;
+        int deviation = Mathf.RoundToInt(wallObjects.Count / 4.0f);
         int randomDeviation = Random.Range(-deviation, deviation + 1);
+
+        if (centerIndex <= 0)
+        {
+            randomDeviation = 0;
+            centerIndex = 0;
+        }
 
         Border targetBorder = wallObjects[centerIndex + randomDeviation];
 

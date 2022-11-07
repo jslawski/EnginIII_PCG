@@ -9,6 +9,9 @@ public class Border : MonoBehaviour
     [SerializeField]
     private GameObject doorwayObject;
 
+    [HideInInspector]
+    public bool connectedToRoom = false;
+
     public void EnableWall()
     {
         this.wallObject.SetActive(true);
