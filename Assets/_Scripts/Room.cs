@@ -22,7 +22,7 @@ public class Room : MonoBehaviour
 
     public List<Border> doorways;
 
-    private List<Transform> floorTransforms;
+    public List<Transform> floorTransforms;
 
     //AABB Variables
     [HideInInspector]

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Room 8
   m_EditorClassIdentifier: 
   roomDimensions: {x: 1, y: 4}
-  northEntrance: 0
+  northEntrance: 1
   eastEntrance: 1
   southEntrance: 0
   westEntrance: 0

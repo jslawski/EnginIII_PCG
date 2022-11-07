@@ -15,5 +15,5 @@ MonoBehaviour:
   roomDimensions: {x: 5, y: 2}
   northEntrance: 1
   eastEntrance: 0
-  southEntrance: 0
+  southEntrance: 1
   westEntrance: 0

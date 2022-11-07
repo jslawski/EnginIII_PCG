@@ -15,14 +15,21 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField]
     private GameObject baseRoomPrefab;
 
-    private RoomData[] allRoomData;
+    [SerializeField]
+    private GameObject playerPrefab;
+
+    private RoomData[] allRoomData;    
+
+    private Vector3 playerStartPoint = Vector3.zero;
 
     // Start is called before the first frame update
     void Start()
     {
         this.allRoomData = Resources.LoadAll<RoomData>("RoomData");
         this.allRooms = new List<Room>();
-        this.GenerateDungeon();    
+        this.GenerateDungeon();
+
+        this.SpawnPlayer();
     }
 
     private void GenerateDungeon()
@@ -33,6 +40,8 @@ public class DungeonGenerator : MonoBehaviour
         {
             this.GenerateAdditionalRooms();
         }
+
+        this.SetStartAndEndPoints();
 
         this.SealUnusedDoorways();
     }
@@ -235,6 +244,31 @@ public class DungeonGenerator : MonoBehaviour
             //Update doorway list for room
             this.allRooms[i].doorways = unsealedDoorways;
         }
+    }
+
+    private void SetStartAndEndPoints()
+    {
+        //Start player on a random tilein the first generated room
+        Room startingRoom = this.allRooms[0];
+        Transform randomTileTransform = startingRoom.floorTransforms[Random.Range(0, startingRoom.floorTransforms.Count)];
+        this.playerStartPoint = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
+
+        //Set the finish line to be an open doorway in the last room that was generated
+        Room endingRoom = this.allRooms[this.allRooms.Count - 1];
+        for (int i = 0; i < endingRoom.doorways.Count; i++)
+        {
+            if (endingRoom.doorways[i].connectedToRoom == true)
+            {
+                endingRoom.doorways[i].EnableFinishLine();
+                endingRoom.doorways[i].name = "FinishLine";
+                break;
+            }
+        }
+    }
+
+    private void SpawnPlayer()
+    {
+        Instantiate(this.playerPrefab, this.playerStartPoint, new Quaternion());
     }
 
     private bool IsCollidingWithExistingRoom(Room newRoom)

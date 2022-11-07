@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomDimensions: {x: 4, y: 4}
   northEntrance: 0
-  eastEntrance: 0
+  eastEntrance: 1
   southEntrance: 1
   westEntrance: 0

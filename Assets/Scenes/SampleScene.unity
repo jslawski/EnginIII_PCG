@@ -346,6 +346,7 @@ MonoBehaviour:
   maxRooms: 8
   parentTransform: {fileID: 1571053546}
   baseRoomPrefab: {fileID: 7302397983163178631, guid: 1788daf25f17af14590578ba305de10b, type: 3}
+  playerPrefab: {fileID: 1408111501548456521, guid: d3aeaa8c8252ad44e9fbc309b7209d43, type: 3}
 --- !u!4 &1571053546
 Transform:
   m_ObjectHideFlags: 0

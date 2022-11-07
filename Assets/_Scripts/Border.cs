@@ -10,7 +10,9 @@ public class Border : MonoBehaviour
     private GameObject wallObject;
     [SerializeField]
     private GameObject doorwayObject;
-    
+    [SerializeField]
+    private GameObject finishLineObject;
+
     public Transform borderTransform;
 
     [HideInInspector]
@@ -22,11 +24,21 @@ public class Border : MonoBehaviour
     {
         this.wallObject.SetActive(true);
         this.doorwayObject.SetActive(false);
+        this.finishLineObject.SetActive(false);
     }
 
     public void EnableDoorway()
     {
         this.doorwayObject.SetActive(true);
         this.wallObject.SetActive(false);
+        this.finishLineObject.SetActive(false);
+    }
+
+    public void EnableFinishLine()
+    {
+        this.finishLineObject.SetActive(true);
+        this.doorwayObject.SetActive(false);
+        this.wallObject.SetActive(false);
+        
     }
 }
