@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e1b185cc7318f546b206019df0e2ad7, type: 3}
+  m_Name: Gluttonous Knife
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  rarity: 2
+  equipmentType: 0
+  enchantmentSlots:
+  - {fileID: 11400000, guid: 230fdfbea02854d4297f55291bdaae04, type: 2}
+  - {fileID: 11400000, guid: fbc9329343273ff458920481e5b03afb, type: 2}
+  attackPower: 10
+  critChance: 0.295
+  attackZoneDimensions: {x: 1, y: 1}

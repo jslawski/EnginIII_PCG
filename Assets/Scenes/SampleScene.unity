@@ -229,6 +229,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -314,6 +315,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44145d14709d5c64a9038d30e8e1df6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99517882e4ae5154c912acd4456a8bcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCreature: {fileID: 0}
+  upperVerticalViewportThreshold: 0.8
+  lowerVerticalViewportThreshold: 0.3
+  horizontalViewportThreshold: 0.5
 --- !u!1 &1571053544
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,7 +363,7 @@ MonoBehaviour:
   maxRooms: 8
   parentTransform: {fileID: 1571053546}
   baseRoomPrefab: {fileID: 7302397983163178631, guid: 1788daf25f17af14590578ba305de10b, type: 3}
-  playerPrefab: {fileID: 1408111501548456521, guid: d3aeaa8c8252ad44e9fbc309b7209d43, type: 3}
+  playerPrefab: {fileID: 2890657395172797774, guid: a95786a2469850b468e7823b7683f353, type: 3}
 --- !u!4 &1571053546
 Transform:
   m_ObjectHideFlags: 0
