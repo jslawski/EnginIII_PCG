@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DungeonGenerator : MonoBehaviour
-{
-    [SerializeField]
-    private int maxRooms = 2;
+{    
+    public int minRooms;    
+    public int maxRooms;
+
+    private int totalRooms = 2;
 
     [SerializeField]
     private Transform parentTransform;
@@ -27,6 +29,9 @@ public class DungeonGenerator : MonoBehaviour
     {
         this.allRoomData = Resources.LoadAll<RoomData>("RoomData");
         this.allRooms = new List<Room>();
+
+        this.totalRooms = Random.Range(this.minRooms, this.maxRooms);
+
         this.GenerateDungeon();
 
         this.SpawnPlayer();
@@ -36,7 +41,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         this.GenerateInitialRoom();
 
-        while (this.allRooms.Count < this.maxRooms)
+        while (this.allRooms.Count < this.totalRooms)
         {
             this.GenerateAdditionalRooms();
         }
@@ -85,7 +90,7 @@ public class DungeonGenerator : MonoBehaviour
                 }
 
                 //Return early if max rooms has been achieved
-                if (this.allRooms.Count >= this.maxRooms)
+                if (this.allRooms.Count >= this.totalRooms)
                 {
                     return;
                 }
