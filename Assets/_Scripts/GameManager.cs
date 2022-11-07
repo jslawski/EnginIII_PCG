@@ -5,10 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static bool dungeonComplete = false;
+
+    private void Start()
     {
-        
+        dungeonComplete = false;
     }
 
     // Update is called once per frame
@@ -17,6 +18,16 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.R))
         {
             SceneManager.LoadScene(0);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Return) && dungeonComplete == true)
+        {
+            SceneManager.LoadScene(0);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 }
