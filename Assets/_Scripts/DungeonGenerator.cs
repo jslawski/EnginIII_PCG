@@ -28,7 +28,12 @@ public class DungeonGenerator : MonoBehaviour
     private void GenerateDungeon()
     {
         this.GenerateInitialRoom();
-        this.GenerateAdditionalRooms();
+
+        while (this.allRooms.Count < this.maxRooms)
+        {
+            this.GenerateAdditionalRooms();
+        }
+
         this.SealUnusedDoorways();
     }
 
@@ -48,24 +53,32 @@ public class DungeonGenerator : MonoBehaviour
 
     private void GenerateAdditionalRooms()
     {
-        int currentRoomIndex = 0;
         float addRoomAtDoorwayChance = 0.0f;
-        float addRoomSuccessChance = 1.0f;  //50% chance to add a room at any given doorway
+        float addRoomSuccessChance = 0.5f;  //50% chance to add a room at any given doorway
 
-        while (this.allRooms.Count < this.maxRooms)
+        //Iterate through all rooms
+        for (int i = 0; i < this.allRooms.Count; i++)
         {
-            //Iterate through each doorway in the room and roll to see if a new room gets added to it
-            for (int i = 0; i < this.allRooms[currentRoomIndex].doorways.Count; i++)
+            //Iterate through all doorways
+            for (int j = 0; j < this.allRooms[i].doorways.Count; j++)
             {
+                //Skip doorways already connected to another room
+                if (this.allRooms[i].doorways[j].connectedToRoom == true)
+                {
+                    continue;
+                }
+
+                //Determine if a room will be added at this doorway
                 addRoomAtDoorwayChance = Random.Range(0.0f, 1.0f);
                 if (addRoomAtDoorwayChance <= addRoomSuccessChance)
                 {
-                    this.AddRoomAtDoorway(this.allRooms[currentRoomIndex].doorways[i]);
+                    this.AddRoomAtDoorway(this.allRooms[i].doorways[j]);
                 }
 
+                //Return early if max rooms has been achieved
                 if (this.allRooms.Count >= this.maxRooms)
                 {
-                    break;
+                    return;
                 }
             }
         }
@@ -73,18 +86,36 @@ public class DungeonGenerator : MonoBehaviour
 
     private void AddRoomAtDoorway(Border doorway)
     {
-        RoomData chosenRoom = this.allRoomData[Random.Range(0, this.allRoomData.Length)];
+        //Randomly choose RoomData
+        int roomDataIndex = Random.Range(0, this.allRoomData.Length);
+        RoomData chosenRoom = this.allRoomData[roomDataIndex];
 
-        GameObject roomInstance = Instantiate(this.baseRoomPrefab, doorway.transform.position, new Quaternion(), this.parentTransform);
-        Room roomComponent = roomInstance.GetComponent<Room>();
-        roomComponent.roomData = chosenRoom;
-        roomComponent.CreateRoom();
+        for (int i = 0; i < this.allRoomData.Length; i++)
+        {
+            //Instantiate and set up room
+            GameObject roomInstance = Instantiate(this.baseRoomPrefab, doorway.transform.position, new Quaternion(), this.parentTransform);
+            Room roomComponent = roomInstance.GetComponent<Room>();
+            roomComponent.roomData = chosenRoom;
+            roomComponent.CreateRoom();
+            roomInstance.name = ("Room_" + this.allRooms.Count);
 
-        roomInstance.name = ("Room_" + this.allRooms.Count);
+            //Attempt to align the new room with its target doorway
+            bool result = this.AlignRoomDoorways(roomComponent, doorway);
 
-        this.AlignRoomDoorways(roomComponent, doorway);
-
-        this.allRooms.Add(roomComponent);
+            //Add room to master list and exit loop if room is properly placed
+            if (result == true)
+            {
+                this.allRooms.Add(roomComponent);
+                break;
+            }
+            //If the room couldn't fit in ANY orientation, destroy it and choose a new RoomData to repeat the process
+            else
+            {
+                Destroy(roomInstance);
+                roomDataIndex = (roomDataIndex + 1) % this.allRoomData.Length;
+                chosenRoom = this.allRoomData[roomDataIndex];
+            }
+        }        
     }
     
     //This was wild to figure out...
@@ -128,44 +159,94 @@ public class DungeonGenerator : MonoBehaviour
         return offset;
     }
 
-    private void AlignRoomDoorways(Room newRoom, Border targetDoorway)
-    {        
+    private bool AlignRoomDoorways(Room newRoom, Border targetDoorway)
+    {
         int attempts = 0;
 
-        //Pick a random doorway
-        Border chosenDoorway = newRoom.doorways[Random.Range(0, newRoom.doorways.Count)];
+        //Pick a random doorway to start with
+        int doorwayIndex = Random.Range(0, newRoom.doorways.Count);
+        Border chosenDoorway = newRoom.doorways[doorwayIndex];
 
-        Debug.LogError("Connecting new " + chosenDoorway.side + " Doorway to old " + targetDoorway.side + " Doorway.");
+        for (attempts = 0; attempts < newRoom.doorways.Count; attempts++)
+        {
+            //Rotate
+            float targetZRotation = this.GetTargetRotation(targetDoorway.side, chosenDoorway.side);
+            Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, targetZRotation);
+            newRoom.roomTransform.rotation = targetRotation;
 
-        float targetZRotation = this.GetTargetRotation(targetDoorway.side, chosenDoorway.side);                                                       
+            //Translate
+            Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway);
+            newRoom.roomTransform.localPosition += moveOffset;
 
-        Debug.LogError("Rotating: " + targetZRotation);
+            //Update AABB
+            newRoom.UpdateAABBBounds();
 
-        Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, targetZRotation);
+            //Update Doorway Sides
+            newRoom.UpdateDoorwaySides();
 
-        newRoom.roomTransform.rotation = targetRotation;
+            //Check for collision with all currently set rooms
+            if (this.IsCollidingWithExistingRoom(newRoom) == true)
+            {
+                doorwayIndex = (doorwayIndex + 1) % newRoom.doorways.Count;
+                chosenDoorway = newRoom.doorways[doorwayIndex];
+            }
+            else
+            {
+                break;
+            }
+        }
 
-        Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway);
+        if (attempts < newRoom.doorways.Count)
+        {
+            //Update doorway status
+            chosenDoorway.connectedToRoom = true;
+            targetDoorway.connectedToRoom = true;
 
-        Debug.LogError("Offset: " + moveOffset);
+            newRoom.UpdateAABBBounds();
+            newRoom.UpdateDoorwaySides();
 
-        newRoom.roomTransform.localPosition += moveOffset;
-
-        chosenDoorway.connectedToRoom = true;
-        targetDoorway.connectedToRoom = true;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void SealUnusedDoorways()
     {
         for (int i = 0; i < this.allRooms.Count; i++)
         {
+            List<Border> unsealedDoorways = new List<Border>();
+
             for (int j = 0; j < this.allRooms[i].doorways.Count; j++)
             {
                 if (this.allRooms[i].doorways[j].connectedToRoom == false)
                 {
                     this.allRooms[i].doorways[j].EnableWall();
+                    this.allRooms[i].doorways[j].gameObject.name = "Wall";
+                }
+                else
+                {
+                    unsealedDoorways.Add(this.allRooms[i].doorways[j]);
                 }
             }
+
+            //Update doorway list for room
+            this.allRooms[i].doorways = unsealedDoorways;
         }
+    }
+
+    private bool IsCollidingWithExistingRoom(Room newRoom)
+    {
+        for (int i = 0; i < this.allRooms.Count; i++)
+        {
+            if (newRoom.CollidesWithRoom(this.allRooms[i]) == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
