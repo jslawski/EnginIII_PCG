@@ -104,7 +104,30 @@ public class DungeonGenerator : MonoBehaviour
                 return 0.0f;
         }
     }
-    
+
+    private Vector3 GetMoveOffset(Border oldDoorway, Border newDoorway)
+    {
+        Vector3 offset = oldDoorway.borderTransform.position - newDoorway.borderTransform.position;
+
+        switch (oldDoorway.side)
+        {
+            case DoorwaySide.North:
+                offset.y += 0.25f;
+                break;
+            case DoorwaySide.East:
+                offset.x += 0.25f;
+                break;
+            case DoorwaySide.South:
+                offset.y -= 0.25f;
+                break;
+            case DoorwaySide.West:
+                offset.x -= 0.25f;
+                break;
+        }
+
+        return offset;
+    }
+
     private void AlignRoomDoorways(Room newRoom, Border targetDoorway)
     {        
         int attempts = 0;
@@ -122,11 +145,11 @@ public class DungeonGenerator : MonoBehaviour
 
         newRoom.roomTransform.rotation = targetRotation;
 
-        Vector3 moveOffset = targetDoorway.borderTransform.position - chosenDoorway.borderTransform.position;
+        Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway);
 
         Debug.LogError("Offset: " + moveOffset);
 
-        newRoom.roomTransform.position += moveOffset;
+        newRoom.roomTransform.localPosition += moveOffset;
 
         chosenDoorway.connectedToRoom = true;
         targetDoorway.connectedToRoom = true;
@@ -134,6 +157,15 @@ public class DungeonGenerator : MonoBehaviour
 
     private void SealUnusedDoorways()
     {
-
+        for (int i = 0; i < this.allRooms.Count; i++)
+        {
+            for (int j = 0; j < this.allRooms[i].doorways.Count; j++)
+            {
+                if (this.allRooms[i].doorways[j].connectedToRoom == false)
+                {
+                    this.allRooms[i].doorways[j].EnableWall();
+                }
+            }
+        }
     }
 }
