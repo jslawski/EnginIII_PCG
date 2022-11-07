@@ -6,19 +6,21 @@ public class Room : MonoBehaviour
 {
     public RoomData roomData;
 
+    public Transform roomTransform;
+
     private Vector3 floorPrefabScale;
 
     [SerializeField]
     private GameObject floorPrefab;
     [SerializeField]
     private GameObject borderPrefab;
-
+    
     [SerializeField]
     private Transform floorParentTransform;
     [SerializeField]
     private Transform borderParentTransform;
 
-    private List<Border> doorways;
+    public List<Border> doorways;
 
     public void CreateRoom()
     {
@@ -44,14 +46,16 @@ public class Room : MonoBehaviour
         }
     }
 
-    private void PopulateNorthSouthSides(float offsetY, Quaternion wallRotation, bool createDoorway)
+    private void PopulateNorthSouthSides(float offsetY, DoorwaySide doorwaySide, bool createDoorway)
     {
         List<Border> wallObjects = new List<Border>();
 
         for (int i = 0; i < this.roomData.roomDimensions.x; i++)
         {
             Vector3 instantiationPosition = this.borderParentTransform.position + new Vector3((i * this.floorPrefabScale.x), offsetY, 0.0f);
-            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, wallRotation, this.borderParentTransform);
+            Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, (float)doorwaySide);
+
+            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, targetRotation, this.borderParentTransform);
 
             Transform wallTransform = wallInstance.GetComponent<Transform>();
             wallTransform.localScale = new Vector3(this.floorPrefabScale.x, wallTransform.localScale.y, wallTransform.localScale.z);
@@ -63,18 +67,19 @@ public class Room : MonoBehaviour
 
         if (createDoorway == true)
         {
-            this.CreateDoorway(wallObjects);
+            this.CreateDoorway(wallObjects, doorwaySide);
         }
     }
 
-    private void PopulateEastWestSides(float offsetX, Quaternion wallRotation, bool createDoorway)
+    private void PopulateEastWestSides(float offsetX, DoorwaySide doorwaySide, bool createDoorway)
     {
         List<Border> wallObjects = new List<Border>();
 
         for (int i = 0; i < this.roomData.roomDimensions.y; i++)
         {
             Vector3 instantiationPosition = this.borderParentTransform.position + new Vector3(offsetX, -(i * this.floorPrefabScale.y), 0.0f);
-            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, wallRotation, this.borderParentTransform);
+            Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, (float)doorwaySide);
+            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, targetRotation, this.borderParentTransform);
 
             Transform wallTransform = wallInstance.GetComponent<Transform>();
             wallTransform.localScale = new Vector3(this.floorPrefabScale.y, wallTransform.localScale.y, wallTransform.localScale.z);
@@ -86,7 +91,7 @@ public class Room : MonoBehaviour
 
         if (createDoorway == true)
         {
-            this.CreateDoorway(wallObjects);
+            this.CreateDoorway(wallObjects, doorwaySide);
         }
     }
 
@@ -94,25 +99,22 @@ public class Room : MonoBehaviour
     {
         //North Side
         float northYPosition = (this.floorPrefabScale.y / 2.0f);
-        this.PopulateNorthSouthSides(northYPosition, new Quaternion(), this.roomData.northEntrance);
+        this.PopulateNorthSouthSides(northYPosition, DoorwaySide.North, this.roomData.northEntrance);
         
         //East Side
-        float eastXPosition = (((this.roomData.roomDimensions.x - 1) * this.floorPrefabScale.x) + (this.floorPrefabScale.x / 2.0f));
-        Quaternion eastRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f));
-        this.PopulateEastWestSides(eastXPosition, eastRotation, this.roomData.eastEntrance);
+        float eastXPosition = (((this.roomData.roomDimensions.x - 1) * this.floorPrefabScale.x) + (this.floorPrefabScale.x / 2.0f));        
+        this.PopulateEastWestSides(eastXPosition, DoorwaySide.East, this.roomData.eastEntrance);
 
         //South Side
-        float southYPosition = -(((this.roomData.roomDimensions.y - 1) * this.floorPrefabScale.y) + (this.floorPrefabScale.y / 2.0f));       
-        Quaternion southRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
-        this.PopulateNorthSouthSides(southYPosition, southRotation, this.roomData.southEntrance);
+        float southYPosition = -(((this.roomData.roomDimensions.y - 1) * this.floorPrefabScale.y) + (this.floorPrefabScale.y / 2.0f));               
+        this.PopulateNorthSouthSides(southYPosition, DoorwaySide.South, this.roomData.southEntrance);
 
         //West Side
-        float westXPosition = -(this.floorPrefabScale.x / 2.0f);
-        Quaternion westRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 90.0f));
-        this.PopulateEastWestSides(westXPosition, westRotation, this.roomData.westEntrance);
+        float westXPosition = -(this.floorPrefabScale.x / 2.0f);        
+        this.PopulateEastWestSides(westXPosition, DoorwaySide.West, this.roomData.westEntrance);
     }
 
-    private void CreateDoorway(List<Border> wallObjects)
+    private void CreateDoorway(List<Border> wallObjects, DoorwaySide doorwaySide)
     {
         int centerIndex = Mathf.RoundToInt(wallObjects.Count / 2.0f) - 1;
         int deviation = Mathf.RoundToInt(wallObjects.Count / 4.0f);
@@ -127,7 +129,8 @@ public class Room : MonoBehaviour
         Border targetBorder = wallObjects[centerIndex + randomDeviation];
 
         targetBorder.EnableDoorway();
-        targetBorder.gameObject.name = "Doorway";
+        targetBorder.gameObject.name = (doorwaySide.ToString() + "_Doorway");
+        targetBorder.side = doorwaySide;
         this.doorways.Add(targetBorder);
     }
 }

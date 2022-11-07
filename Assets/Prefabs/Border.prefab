@@ -242,3 +242,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallObject: {fileID: 5465932184954733729}
   doorwayObject: {fileID: 4221989859449655111}
+  borderTransform: {fileID: 5374204313430071332}
+  connectedToRoom: 0

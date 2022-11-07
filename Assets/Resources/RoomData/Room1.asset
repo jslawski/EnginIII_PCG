@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f8b5f945770f01499338e99949c8445, type: 3}
   m_Name: Room1
   m_EditorClassIdentifier: 
-  roomDimensions: {x: 1, y: 3}
+  roomDimensions: {x: 6, y: 1}
   northEntrance: 1
   eastEntrance: 1
   southEntrance: 0

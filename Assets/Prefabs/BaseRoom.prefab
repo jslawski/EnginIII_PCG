@@ -78,10 +78,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomData: {fileID: 11400000, guid: fbf22991c4241c44ab26727b04a07ee1, type: 2}
+  roomTransform: {fileID: 564602239270865623}
   floorPrefab: {fileID: 7257388069095261705, guid: 70a945435ee332b40aa1bd2e21e4e1b7, type: 3}
   borderPrefab: {fileID: 7081981691927245357, guid: 6cfa5bda7db2b01458a158b351597c08, type: 3}
   floorParentTransform: {fileID: 7472928691503946021}
   borderParentTransform: {fileID: 2492640387660611340}
+  doorways: []
 --- !u!1 &7409385205692168187
 GameObject:
   m_ObjectHideFlags: 0
