@@ -11,16 +11,14 @@ public class Room : MonoBehaviour
     [SerializeField]
     private GameObject floorPrefab;
     [SerializeField]
-    private GameObject wallPrefab;
-    [SerializeField]
-    private GameObject doorwayPrefab;
+    private GameObject borderPrefab;
 
     [SerializeField]
     private Transform floorParentTransform;
     [SerializeField]
-    private Transform wallParentTransform;
-    [SerializeField]
-    private Transform doorwayParentTransform;
+    private Transform borderParentTransform;
+
+    private List<Border> doorways;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +28,8 @@ public class Room : MonoBehaviour
 
     private void CreateRoom()
     {
+        this.doorways = new List<Border>();
+
         this.floorPrefabScale = this.floorPrefab.GetComponent<Transform>().lossyScale;
 
         this.CreateFloors();
@@ -38,8 +38,6 @@ public class Room : MonoBehaviour
 
     private void CreateFloors()
     {
-        
-
         for (int i = 0; i < this.roomData.roomDimensions.y; i++)
         {
             for (int j = 0; j < this.roomData.roomDimensions.x; j++)
@@ -58,8 +56,12 @@ public class Room : MonoBehaviour
 
         for (int i = 0; i < this.roomData.roomDimensions.x; i++)
         {
-            Vector3 instantiationPosition = this.wallParentTransform.position + new Vector3((i * this.floorPrefabScale.x), offsetY, 0.0f);
-            GameObject wallInstance = Instantiate(this.wallPrefab, instantiationPosition, wallRotation, this.wallParentTransform);
+            Vector3 instantiationPosition = this.borderParentTransform.position + new Vector3((i * this.floorPrefabScale.x), offsetY, 0.0f);
+            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, wallRotation, this.borderParentTransform);
+
+            Transform wallTransform = wallInstance.GetComponent<Transform>();
+            wallTransform.localScale = new Vector3(this.floorPrefabScale.x, wallTransform.localScale.y, wallTransform.localScale.z);
+
             Border borderComponent = wallInstance.GetComponent<Border>();
             borderComponent.EnableWall();
             wallObjects.Add(borderComponent);
@@ -77,8 +79,12 @@ public class Room : MonoBehaviour
 
         for (int i = 0; i < this.roomData.roomDimensions.y; i++)
         {
-            Vector3 instantiationPosition = this.wallParentTransform.position + new Vector3(offsetX, -(i * this.floorPrefabScale.y), 0.0f);
-            GameObject wallInstance = Instantiate(this.wallPrefab, instantiationPosition, wallRotation, this.wallParentTransform);
+            Vector3 instantiationPosition = this.borderParentTransform.position + new Vector3(offsetX, -(i * this.floorPrefabScale.y), 0.0f);
+            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, wallRotation, this.borderParentTransform);
+
+            Transform wallTransform = wallInstance.GetComponent<Transform>();
+            wallTransform.localScale = new Vector3(this.floorPrefabScale.y, wallTransform.localScale.y, wallTransform.localScale.z);
+
             Border borderComponent = wallInstance.GetComponent<Border>();
             borderComponent.EnableWall();
             wallObjects.Add(borderComponent);
@@ -118,6 +124,10 @@ public class Room : MonoBehaviour
         int deviation = Mathf.RoundToInt(this.roomData.roomDimensions.x / 4.0f);
         int randomDeviation = Random.Range(-deviation, deviation + 1);
 
-        wallObjects[centerIndex + randomDeviation].EnableDoorway();
+        Border targetBorder = wallObjects[centerIndex + randomDeviation];
+
+        targetBorder.EnableDoorway();
+        targetBorder.gameObject.name = "Doorway";
+        this.doorways.Add(targetBorder);
     }
 }
