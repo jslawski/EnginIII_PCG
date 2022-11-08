@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class TestManager : MonoBehaviour
 {
@@ -24,6 +25,16 @@ public class TestManager : MonoBehaviour
     {
         this.minRoomValue.text = this.minRoomSlider.value.ToString();
         this.maxRoomValue.text = this.maxRoomSlider.value.ToString();
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            SceneManager.LoadScene(0);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     private void ClearCurrentDungeon()

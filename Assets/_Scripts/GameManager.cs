@@ -34,5 +34,10 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 }

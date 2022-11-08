@@ -788,6 +788,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -876,10 +877,20 @@ MonoBehaviour:
   dungeonGeneratorPrefab: {fileID: 9171216930010230971, guid: 9b8936eb0d9f0f042bf3156c87d1076b, type: 3}
   minRoomSlider: {fileID: 1671870863}
   maxRoomSlider: {fileID: 561481746}
-  densitySlider: {fileID: 0}
   minRoomValue: {fileID: 1761481042}
   maxRoomValue: {fileID: 1476405156}
-  densityValue: {fileID: 0}
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcd82c4d5697154b88d21e509b25955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1189608745
 GameObject:
   m_ObjectHideFlags: 0
