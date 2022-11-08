@@ -7,9 +7,14 @@ public class GameManager : MonoBehaviour
 {
     public static bool dungeonComplete = false;
 
+    [SerializeField]
+    private DungeonGenerator generator;
+
     private void Start()
     {
         dungeonComplete = false;
+
+        this.generator.GenerateDungeon();
     }
 
     // Update is called once per frame

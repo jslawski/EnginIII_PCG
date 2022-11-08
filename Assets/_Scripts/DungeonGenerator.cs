@@ -7,6 +7,8 @@ public class DungeonGenerator : MonoBehaviour
     public int minRooms;    
     public int maxRooms;
 
+    public float addRoomSuccessChance = 0.5f;  //50% chance to add a room at any given doorway
+
     private int totalRooms = 2;
 
     [SerializeField]
@@ -24,21 +26,13 @@ public class DungeonGenerator : MonoBehaviour
 
     private Vector3 playerStartPoint = Vector3.zero;
 
-    // Start is called before the first frame update
-    void Start()
+    public void GenerateDungeon()
     {
         this.allRoomData = Resources.LoadAll<RoomData>("RoomData");
         this.allRooms = new List<Room>();
 
         this.totalRooms = Random.Range(this.minRooms, this.maxRooms);
 
-        this.GenerateDungeon();
-
-        this.SpawnPlayer();
-    }
-
-    private void GenerateDungeon()
-    {
         this.GenerateInitialRoom();
 
         while (this.allRooms.Count < this.totalRooms)
@@ -49,6 +43,8 @@ public class DungeonGenerator : MonoBehaviour
         this.SetStartAndEndPoints();
 
         this.SealUnusedDoorways();
+
+        this.SpawnPlayer();
     }
 
     private void GenerateInitialRoom()
@@ -68,7 +64,6 @@ public class DungeonGenerator : MonoBehaviour
     private void GenerateAdditionalRooms()
     {
         float addRoomAtDoorwayChance = 0.0f;
-        float addRoomSuccessChance = 0.5f;  //50% chance to add a room at any given doorway
 
         //Iterate through all rooms
         for (int i = 0; i < this.allRooms.Count; i++)

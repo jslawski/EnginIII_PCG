@@ -315,6 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44145d14709d5c64a9038d30e8e1df6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  generator: {fileID: 1571053545}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,6 +363,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minRooms: 4
   maxRooms: 10
+  addRoomSuccessChance: 0.5
   parentTransform: {fileID: 1571053546}
   baseRoomPrefab: {fileID: 7302397983163178631, guid: 1788daf25f17af14590578ba305de10b, type: 3}
   playerPrefab: {fileID: 2890657395172797774, guid: a95786a2469850b468e7823b7683f353, type: 3}
