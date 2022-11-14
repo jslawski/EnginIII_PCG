@@ -361,8 +361,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdccb2921efe8284ab127ddce5777776, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRooms: 10
-  maxRooms: 20
+  minRooms: 2
+  maxRooms: 2
   addRoomSuccessChance: 0.5
   parentTransform: {fileID: 1571053546}
   baseRoomPrefab: {fileID: 7302397983163178631, guid: 1788daf25f17af14590578ba305de10b, type: 3}

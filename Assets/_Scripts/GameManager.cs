@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private DungeonGenerator generator;
 
+    public static int playerKeys = 0;
+
     private void Start()
     {
         dungeonComplete = false;
