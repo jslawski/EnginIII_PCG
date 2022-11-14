@@ -51,3 +51,4 @@ MonoBehaviour:
   baseRoomPrefab: {fileID: 7302397983163178631, guid: 1788daf25f17af14590578ba305de10b, type: 3}
   playerPrefab: {fileID: 1408111501548456521, guid: d3aeaa8c8252ad44e9fbc309b7209d43, type: 3}
   keyPrefab: {fileID: 376048875379980675, guid: c882e31709225964d8e443824d6ce385, type: 3}
+  goalPrefab: {fileID: 1259320676668855709, guid: a0dc5c70bb080a94ca0bbebacfc0d889, type: 3}

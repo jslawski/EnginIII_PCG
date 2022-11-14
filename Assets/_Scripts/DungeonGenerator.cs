@@ -25,6 +25,9 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField]
     private GameObject keyPrefab;
 
+    [SerializeField]
+    private GameObject goalPrefab;
+
     private RoomData[] allRoomData;    
 
     private Vector3 playerStartPoint = Vector3.zero;
@@ -288,9 +291,25 @@ public class DungeonGenerator : MonoBehaviour
         return furthestRoom;
     }
 
+    private void SetupFinalRoom(Room finalRoom, Border finalDoorway)
+    {
+        finalRoom.isFinalRoom = true;
+        finalDoorway.EnableFinishLine();
+        finalDoorway.name = "FinishLine";
+        this.finalDoor = finalDoorway.GetComponentInChildren<FinishLine>();
+
+        //Spawn goal on random tile
+        int randomTileIndex = Random.Range(0, finalRoom.floorTiles.Count);
+        Transform randomTileTransform = finalRoom.floorTransforms[randomTileIndex];
+        FloorTile randomTile = finalRoom.floorTiles[randomTileIndex];
+        Vector3 instantiationPosition = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
+        Instantiate(this.goalPrefab, instantiationPosition, new Quaternion(), this.gameObject.GetComponent<Transform>());
+        randomTile.SetState(TileState.Key);
+    }
+
     private void SetStartAndEndPoints()
     {
-        //Start player on a random tilein the first generated room
+        //Start player on a random tile in the first generated room
         Room startingRoom = this.allRooms[0];
         Transform randomTileTransform = startingRoom.floorTransforms[Random.Range(0, startingRoom.floorTransforms.Count)];
         this.playerStartPoint = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
@@ -301,10 +320,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             if (endingRoom.doorways[i].connectedToRoom == true)
             {
-                endingRoom.isFinalRoom = true;
-                endingRoom.doorways[i].EnableFinishLine();
-                endingRoom.doorways[i].name = "FinishLine";
-                this.finalDoor = endingRoom.doorways[i].GetComponentInChildren<FinishLine>();
+                this.SetupFinalRoom(endingRoom, endingRoom.doorways[i]);
                 break;
             }
         }
