@@ -145,31 +145,24 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private Vector3 GetMoveOffset(Border oldDoorway, Border newDoorway, Vector3 tileScale)
+    private Vector3 GetMoveOffset(Border oldDoorway, Border newDoorway)
     {
         Vector3 offset = oldDoorway.borderTransform.position - newDoorway.borderTransform.position;
         float doorwayWidthOffset = newDoorway.wallObject.GetComponent<Transform>().localScale.y;
-
-        Vector3 rotatedTileScale = tileScale;
-
-        if (newDoorway.borderTransform.up != Vector3.up && newDoorway.borderTransform.up != Vector3.down)
-        {
-            rotatedTileScale = new Vector3(tileScale.y, tileScale.x, tileScale.z);
-        }
-
+        
         switch (oldDoorway.side)
         {
             case DoorwaySide.North:
-                offset.y += (doorwayWidthOffset);// + (rotatedTileScale.y / 2.0f));
+                offset.y += (doorwayWidthOffset);
                 break;
             case DoorwaySide.East:
-                offset.x += (doorwayWidthOffset);// + (rotatedTileScale.x / 2.0f));
+                offset.x += (doorwayWidthOffset);
                 break;
             case DoorwaySide.South:
-                offset.y -= (doorwayWidthOffset);// + (rotatedTileScale.y / 2.0f));
+                offset.y -= (doorwayWidthOffset);
                 break;
             case DoorwaySide.West:
-                offset.x -= (doorwayWidthOffset);// + (rotatedTileScale.x / 2.0f));
+                offset.x -= (doorwayWidthOffset);
                 break;
         }
 
@@ -193,7 +186,7 @@ public class DungeonGenerator : MonoBehaviour
             newRoom.roomTransform.rotation = targetRotation;
 
             //Translate
-            Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway, newRoom.floorPrefabScale);
+            Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway);
             newRoom.roomTransform.localPosition += moveOffset;
             
             //Update AABB

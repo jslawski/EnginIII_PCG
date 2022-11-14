@@ -7,9 +7,8 @@ public class Room : MonoBehaviour
     public RoomData roomData;
 
     public Transform roomTransform;
-
-    [HideInInspector]
-    public Vector3 floorPrefabScale;
+    
+    private Vector3 floorPrefabScale;
 
     [SerializeField]
     private GameObject floorPrefab;
