@@ -23,7 +23,6 @@ public class Room : MonoBehaviour
     public List<Border> doorways;
 
     public List<FloorTile> floorTiles;
-    public List<Transform> floorTransforms;
 
     //AABB Variables
     [HideInInspector]
@@ -41,7 +40,6 @@ public class Room : MonoBehaviour
     public void CreateRoom()
     {
         this.doorways = new List<Border>();
-        this.floorTransforms = new List<Transform>();
 
         float randomTileScaleX = Random.Range(this.roomData.minMaxTileScaleX[0], this.roomData.minMaxTileScaleX[1] + 1);
         float randomTileScaleY = Random.Range(this.roomData.minMaxTileScaleY[0], this.roomData.minMaxTileScaleY[1] + 1);
@@ -64,11 +62,9 @@ public class Room : MonoBehaviour
                     new Vector3((j * this.floorPrefabScale.x), -(i * this.floorPrefabScale.y), 0.0f);
 
                 GameObject floorInstance = Instantiate(this.floorPrefab, instantiationPosition, new Quaternion(), this.floorParentTransform);
-                Transform floorTransform = floorInstance.GetComponent<Transform>();
-                floorTransform.localScale = this.floorPrefabScale;
-                this.floorTransforms.Add(floorTransform);
 
                 FloorTile floorTile = floorInstance.GetComponent<FloorTile>();
+                floorTile.tileTransform.localScale = this.floorPrefabScale;
                 floorTile.SetState(TileState.Empty);
                 this.floorTiles.Add(floorTile);
             }
@@ -168,17 +164,17 @@ public class Room : MonoBehaviour
 
         if (this.roomTransform.up == Vector3.up || this.roomTransform.up == Vector3.down)
         {
-            xPos1 = this.floorTransforms[0].position.x;
-            xPos2 = this.floorTransforms[this.roomData.roomDimensions.x - 1].position.x;
-            yPos1 = this.floorTransforms[0].position.y;
-            yPos2 = this.floorTransforms[(this.roomData.roomDimensions.x * this.roomData.roomDimensions.y) - 1].position.y;
+            xPos1 = this.floorTiles[0].tileTransform.position.x;
+            xPos2 = this.floorTiles[this.roomData.roomDimensions.x - 1].tileTransform.position.x;
+            yPos1 = this.floorTiles[0].tileTransform.position.y;
+            yPos2 = this.floorTiles[(this.roomData.roomDimensions.x * this.roomData.roomDimensions.y) - 1].tileTransform.position.y;
         }
         else
         {
-            xPos1 = this.floorTransforms[0].position.x;
-            xPos2 = this.floorTransforms[(this.roomData.roomDimensions.x * this.roomData.roomDimensions.y) - 1].position.x;
-            yPos1 = this.floorTransforms[0].position.y;
-            yPos2 = this.floorTransforms[this.roomData.roomDimensions.x - 1].position.y;            
+            xPos1 = this.floorTiles[0].tileTransform.position.x;
+            xPos2 = this.floorTiles[(this.roomData.roomDimensions.x * this.roomData.roomDimensions.y) - 1].tileTransform.position.x;
+            yPos1 = this.floorTiles[0].tileTransform.position.y;
+            yPos2 = this.floorTiles[this.roomData.roomDimensions.x - 1].tileTransform.position.y;            
         }
 
         if (xPos1 < xPos2)

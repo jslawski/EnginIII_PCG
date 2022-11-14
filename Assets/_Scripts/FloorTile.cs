@@ -7,6 +7,9 @@ public enum TileState { Empty, Lava, Wall, Key, None }
 public class FloorTile : MonoBehaviour
 {
     [SerializeField]
+    public Transform tileTransform;
+
+    [SerializeField]
     private Collider tileCollider;
 
     [SerializeField]

@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d147f8d84bceb4f904b7c882143a72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileTransform: {fileID: 7514358913843953755}
   tileCollider: {fileID: 3791666994362889055}
   tileRenderer: {fileID: 149135996796336423}
   floorMaterial: {fileID: 2100000, guid: a8f024c4a7243a04e86d3c1123bd0b86, type: 2}

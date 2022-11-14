@@ -7,7 +7,8 @@ public class DungeonGenerator : MonoBehaviour
     public int minRooms;    
     public int maxRooms;
 
-    public float addRoomSuccessChance = 0.5f;  //50% chance to add a room at any given doorway
+    public float addRoomSuccessChance = 0.5f;   //50% chance to add a room at any given doorway
+    public float lavaSpawnChance = 0.30f;       //30% chance to spawn lava inside any room
 
     private int totalRooms = 2;
 
@@ -48,14 +49,16 @@ public class DungeonGenerator : MonoBehaviour
             this.GenerateAdditionalRooms();
         }
 
+        this.SpawnWalls();
+
+        this.SpawnLava();
+
         this.SetStartAndEndPoints();
 
         this.SealUnusedDoorways();
 
         this.SpawnKeys();
-
-        this.SpawnWalls();
-
+        
         this.SpawnPlayer();
     }
 
@@ -302,9 +305,9 @@ public class DungeonGenerator : MonoBehaviour
 
         //Spawn goal on random tile
         int randomTileIndex = Random.Range(0, finalRoom.floorTiles.Count);
-        Transform randomTileTransform = finalRoom.floorTransforms[randomTileIndex];
         FloorTile randomTile = finalRoom.floorTiles[randomTileIndex];
-        Vector3 instantiationPosition = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
+
+        Vector3 instantiationPosition = new Vector3(randomTile.tileTransform.position.x, randomTile.tileTransform.position.y, -0.5f);
         Instantiate(this.goalPrefab, instantiationPosition, new Quaternion(), this.gameObject.GetComponent<Transform>());
         randomTile.SetState(TileState.Key);
     }
@@ -313,18 +316,16 @@ public class DungeonGenerator : MonoBehaviour
     {
         //Start player on a random tile in the first generated room
         Room startingRoom = this.allRooms[0];
-        int randomTileIndex = Random.Range(0, startingRoom.floorTransforms.Count);
+        int randomTileIndex = Random.Range(0, startingRoom.floorTiles.Count);
         FloorTile randomFloorTile = startingRoom.floorTiles[randomTileIndex];
-        Transform randomTileTransform = startingRoom.floorTransforms[randomTileIndex];
 
         while (randomFloorTile.state != TileState.Empty)
         {
-            randomTileIndex = Random.Range(0, startingRoom.floorTransforms.Count);
+            randomTileIndex = Random.Range(0, startingRoom.floorTiles.Count);
             randomFloorTile = startingRoom.floorTiles[randomTileIndex];
-            randomTileTransform = startingRoom.floorTransforms[randomTileIndex];
         }
         
-        this.playerStartPoint = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
+        this.playerStartPoint = new Vector3(randomFloorTile.tileTransform.position.x, randomFloorTile.tileTransform.position.y, -0.5f);
 
         //Change the open doorway in the last room that was generated to a locked finish door
         Room endingRoom = this.allRooms[this.allRooms.Count - 1];
@@ -340,10 +341,10 @@ public class DungeonGenerator : MonoBehaviour
 
     private void SpawnKeyInRoom(Room spawnRoom)
     {
-        int randomTileIndex = Random.Range(0, spawnRoom.floorTiles.Count);
-        Transform randomTileTransform = spawnRoom.floorTransforms[randomTileIndex];
+        int randomTileIndex = Random.Range(0, spawnRoom.floorTiles.Count);        
         FloorTile randomTile = spawnRoom.floorTiles[randomTileIndex];
-        Vector3 instantiationPosition = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
+
+        Vector3 instantiationPosition = new Vector3(randomTile.tileTransform.position.x, randomTile.tileTransform.position.y, -0.5f);
         Instantiate(this.keyPrefab, instantiationPosition, new Quaternion(), this.gameObject.GetComponent<Transform>());
         randomTile.SetState(TileState.Key);
         spawnRoom.containsKey = true;
@@ -377,7 +378,7 @@ public class DungeonGenerator : MonoBehaviour
     private void SpawnWallsInRoom(Room spawnRoom, int numWalls)
     {
         int currentWallCount = 0;
-
+        
         while (currentWallCount < numWalls)
         {
             //Avoid spawning walls on the borders of the room, to prevent blocking a doorway
@@ -401,7 +402,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private int GetMaxNumWallsToSpawn(int width, int height)
+    private int GetSafeMaximum(int width, int height)
     {
         if (width <= 2 || height <= 2)
         {
@@ -420,10 +421,32 @@ public class DungeonGenerator : MonoBehaviour
         for (int i = 0; i < this.allRooms.Count; i++)
         {
             int minNumWallsToSpawn = 0;
-            int maxNumWallsToSpawn = this.GetMaxNumWallsToSpawn(this.allRooms[i].roomData.roomDimensions.x, this.allRooms[i].roomData.roomDimensions.y);
-                
+            int maxNumWallsToSpawn = this.GetSafeMaximum(this.allRooms[i].roomData.roomDimensions.x, this.allRooms[i].roomData.roomDimensions.y);                
             int numWallsToSpawn = Random.Range(minNumWallsToSpawn, maxNumWallsToSpawn);
+
             this.SpawnWallsInRoom(this.allRooms[i], numWallsToSpawn);
+        }
+    }
+
+    private void SpawnLavaInRoom(Room spawnRoom, int numLava)
+    {
+
+    }
+
+    private void SpawnLava()
+    {
+
+        //Potentially spawn lava in any room
+        for (int i = 0; i < this.allRooms.Count; i++)
+        {
+            if (Random.Range(0.0f, 1.0f) < this.lavaSpawnChance)
+            {
+                int minNumLavaToSpawn = 0;
+                int maxNumLavaToSpawn = this.GetSafeMaximum(this.allRooms[i].roomData.roomDimensions.x, this.allRooms[i].roomData.roomDimensions.y);
+                int numLavaToSpawn = Random.Range(minNumLavaToSpawn, maxNumLavaToSpawn);
+
+                this.SpawnLavaInRoom(this.allRooms[i], numLavaToSpawn);
+            }
         }
     }
 
