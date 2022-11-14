@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f8b5f945770f01499338e99949c8445, type: 3}
   m_Name: Room 8
   m_EditorClassIdentifier: 
-  roomDimensions: {x: 1, y: 4}
-  minMaxTileScaleX: {x: 1.5, y: 4}
-  minMaxTileScaleY: {x: 1.5, y: 3}
+  roomDimensions: {x: 2, y: 8}
+  minMaxTileScaleX: {x: 1, y: 2}
+  minMaxTileScaleY: {x: 1, y: 1.5}
   northEntrance: 1
   eastEntrance: 1
   southEntrance: 0
