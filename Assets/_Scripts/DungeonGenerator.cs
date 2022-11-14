@@ -263,6 +263,24 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    private Room GetFurthestRoom()
+    {
+        float furthestDistance = 0.0f;
+        Room furthestRoom = this.allRooms[this.allRooms.Count - 1];
+
+        for (int i = 0; i < this.allRooms.Count; i++)
+        {
+            float distanceFromPlayer = Vector3.Distance(this.playerStartPoint, this.allRooms[i].roomTransform.position);
+            if (distanceFromPlayer > furthestDistance)
+            {
+                furthestRoom = this.allRooms[i];
+                furthestDistance = distanceFromPlayer;
+            }
+        }
+
+        return furthestRoom;
+    }
+
     private void SetStartAndEndPoints()
     {
         //Start player on a random tilein the first generated room
@@ -271,7 +289,7 @@ public class DungeonGenerator : MonoBehaviour
         this.playerStartPoint = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
 
         //Set the finish line to be an open doorway in the last room that was generated
-        Room endingRoom = this.allRooms[this.allRooms.Count - 1];
+        Room endingRoom = this.GetFurthestRoom();
         for (int i = 0; i < endingRoom.doorways.Count; i++)
         {
             if (endingRoom.doorways[i].connectedToRoom == true)
