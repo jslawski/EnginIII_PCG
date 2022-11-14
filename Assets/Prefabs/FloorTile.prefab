@@ -48,6 +48,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileCollider: {fileID: 3791666994362889055}
+  tileRenderer: {fileID: 149135996796336423}
+  floorMaterial: {fileID: 2100000, guid: a8f024c4a7243a04e86d3c1123bd0b86, type: 2}
+  wallMaterial: {fileID: 2100000, guid: cbea9d6e98c963347abd2eb13a50b64b, type: 2}
+  lavaMaterial: {fileID: 2100000, guid: a080f3763b3236e489d423efd75b0a3f, type: 2}
   state: 4
 --- !u!33 &5855500823523478102
 MeshFilter:

@@ -54,6 +54,8 @@ public class DungeonGenerator : MonoBehaviour
 
         this.SpawnKeys();
 
+        this.SpawnWalls();
+
         this.SpawnPlayer();
     }
 
@@ -311,7 +313,17 @@ public class DungeonGenerator : MonoBehaviour
     {
         //Start player on a random tile in the first generated room
         Room startingRoom = this.allRooms[0];
-        Transform randomTileTransform = startingRoom.floorTransforms[Random.Range(0, startingRoom.floorTransforms.Count)];
+        int randomTileIndex = Random.Range(0, startingRoom.floorTransforms.Count);
+        FloorTile randomFloorTile = startingRoom.floorTiles[randomTileIndex];
+        Transform randomTileTransform = startingRoom.floorTransforms[randomTileIndex];
+
+        while (randomFloorTile.state != TileState.Empty)
+        {
+            randomTileIndex = Random.Range(0, startingRoom.floorTransforms.Count);
+            randomFloorTile = startingRoom.floorTiles[randomTileIndex];
+            randomTileTransform = startingRoom.floorTransforms[randomTileIndex];
+        }
+        
         this.playerStartPoint = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
 
         //Change the open doorway in the last room that was generated to a locked finish door
@@ -334,6 +346,7 @@ public class DungeonGenerator : MonoBehaviour
         Vector3 instantiationPosition = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
         Instantiate(this.keyPrefab, instantiationPosition, new Quaternion(), this.gameObject.GetComponent<Transform>());
         randomTile.SetState(TileState.Key);
+        spawnRoom.containsKey = true;
     }
 
     private void SpawnKeys()
@@ -359,6 +372,59 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         GameManager.totalKeys = keysToSpawn;        
+    }
+
+    private void SpawnWallsInRoom(Room spawnRoom, int numWalls)
+    {
+        int currentWallCount = 0;
+
+        while (currentWallCount < numWalls)
+        {
+            //Avoid spawning walls on the borders of the room, to prevent blocking a doorway
+            int randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
+            int randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
+            int randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
+            
+            FloorTile randomTile = spawnRoom.floorTiles[randomTileIndex];
+
+            while (randomTile.state != TileState.Empty)
+            {
+                randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
+                randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
+                randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
+                randomTile = spawnRoom.floorTiles[randomTileIndex];
+            }
+
+            randomTile.SetState(TileState.Wall);
+
+            currentWallCount++;
+        }
+    }
+
+    private int GetMaxNumWallsToSpawn(int width, int height)
+    {
+        if (width <= 2 || height <= 2)
+        {
+            return 0;
+        }
+        
+        int largestDimension = (width > height) ? width : height;
+        
+        //Subtract to to discount the uppermost and lowermost tile, which should always remain empty
+        return (largestDimension - 2);        
+    }
+
+    private void SpawnWalls()
+    {
+        //Potentially spawn walls in any room
+        for (int i = 0; i < this.allRooms.Count; i++)
+        {
+            int minNumWallsToSpawn = 0;
+            int maxNumWallsToSpawn = this.GetMaxNumWallsToSpawn(this.allRooms[i].roomData.roomDimensions.x, this.allRooms[i].roomData.roomDimensions.y);
+                
+            int numWallsToSpawn = Random.Range(minNumWallsToSpawn, maxNumWallsToSpawn);
+            this.SpawnWallsInRoom(this.allRooms[i], numWallsToSpawn);
+        }
     }
 
     private void SpawnPlayer()

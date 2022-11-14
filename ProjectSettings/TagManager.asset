@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Hittable
   - Wall
+  - Goal
+  - Lava
+  - Floor
   layers:
   - Default
   - TransparentFX
