@@ -148,21 +148,20 @@ public class DungeonGenerator : MonoBehaviour
     private Vector3 GetMoveOffset(Border oldDoorway, Border newDoorway)
     {
         Vector3 offset = oldDoorway.borderTransform.position - newDoorway.borderTransform.position;
-        float doorwayWidthOffset = newDoorway.wallObject.GetComponent<Transform>().localScale.y;
         
         switch (oldDoorway.side)
         {
             case DoorwaySide.North:
-                offset.y += (doorwayWidthOffset);
+                offset.y += (newDoorway.borderYScale);
                 break;
             case DoorwaySide.East:
-                offset.x += (doorwayWidthOffset);
+                offset.x += (newDoorway.borderYScale);
                 break;
             case DoorwaySide.South:
-                offset.y -= (doorwayWidthOffset);
+                offset.y -= (newDoorway.borderYScale);
                 break;
             case DoorwaySide.West:
-                offset.x -= (doorwayWidthOffset);
+                offset.x -= (newDoorway.borderYScale);
                 break;
         }
 
@@ -217,11 +216,26 @@ public class DungeonGenerator : MonoBehaviour
             newRoom.UpdateAABBBounds();
             newRoom.UpdateDoorwaySides();
 
+            //Modify the size of the larger doorway to match the smaller doorway
+            this.MatchDoorwaySizes(chosenDoorway, targetDoorway);
+
             return true;
         }
         else
         {
             return false;
+        }
+    }
+
+    private void MatchDoorwaySizes(Border doorway1, Border doorway2)
+    {
+        if (doorway1.borderXScale > doorway2.borderXScale)
+        {
+            doorway1.ShrinkDoorway(doorway2.borderXScale);
+        }
+        else
+        {
+            doorway2.ShrinkDoorway(doorway1.borderXScale);
         }
     }
 

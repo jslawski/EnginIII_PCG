@@ -79,12 +79,10 @@ public class Room : MonoBehaviour
             Vector3 instantiationPosition = this.borderParentTransform.position + new Vector3((i * this.floorPrefabScale.x), offsetY, 0.0f);
             Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, (float)doorwaySide);
 
-            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, targetRotation, this.borderParentTransform);
-
-            Transform wallTransform = wallInstance.GetComponent<Transform>();
-            wallTransform.localScale = new Vector3(this.floorPrefabScale.x, wallTransform.localScale.y, wallTransform.localScale.z);
+            GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, targetRotation, this.borderParentTransform);            
 
             Border borderComponent = wallInstance.GetComponent<Border>();
+            borderComponent.SetBorderXScale(this.floorPrefabScale.x);
             borderComponent.EnableWall();
             wallObjects.Add(borderComponent);
         }
@@ -104,11 +102,9 @@ public class Room : MonoBehaviour
             Vector3 instantiationPosition = this.borderParentTransform.position + new Vector3(offsetX, -(i * this.floorPrefabScale.y), 0.0f);
             Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, (float)doorwaySide);
             GameObject wallInstance = Instantiate(this.borderPrefab, instantiationPosition, targetRotation, this.borderParentTransform);
-
-            Transform wallTransform = wallInstance.GetComponent<Transform>();
-            wallTransform.localScale = new Vector3(this.floorPrefabScale.y, wallTransform.localScale.y, wallTransform.localScale.z);
-
+           
             Border borderComponent = wallInstance.GetComponent<Border>();
+            borderComponent.SetBorderXScale(this.floorPrefabScale.y);
             borderComponent.EnableWall();
             wallObjects.Add(borderComponent);
         }
@@ -217,6 +213,12 @@ public class Room : MonoBehaviour
             this.minYPos -= (this.floorPrefabScale.x / 2.0f);
             this.maxYPos += (this.floorPrefabScale.x / 2.0f);
         }
+
+        //Account for width of borders
+        this.minXPos -= (this.doorways[0].borderYScale / 2.0f);
+        this.maxXPos += (this.doorways[0].borderYScale / 2.0f);
+        this.minYPos -= (this.doorways[0].borderYScale / 2.0f);
+        this.maxYPos += (this.doorways[0].borderYScale / 2.0f);
     }
 
     public bool CollidesWithRoom(Room checkRoom)
