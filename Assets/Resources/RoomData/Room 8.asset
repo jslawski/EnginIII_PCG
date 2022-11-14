@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Room 8
   m_EditorClassIdentifier: 
   roomDimensions: {x: 1, y: 4}
+  minMaxTileScaleX: {x: 1.5, y: 4}
+  minMaxTileScaleY: {x: 1.5, y: 3}
   northEntrance: 1
   eastEntrance: 1
   southEntrance: 0

@@ -6,6 +6,10 @@ using UnityEngine;
 public class RoomData : ScriptableObject
 {
     public Vector2Int roomDimensions;
+
+    public Vector2 minMaxTileScaleX;
+    public Vector2 minMaxTileScaleY;
+
     public bool northEntrance;
     public bool eastEntrance;
     public bool southEntrance;

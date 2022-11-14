@@ -145,23 +145,31 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private Vector3 GetMoveOffset(Border oldDoorway, Border newDoorway)
+    private Vector3 GetMoveOffset(Border oldDoorway, Border newDoorway, Vector3 tileScale)
     {
         Vector3 offset = oldDoorway.borderTransform.position - newDoorway.borderTransform.position;
+        float doorwayWidthOffset = newDoorway.wallObject.GetComponent<Transform>().localScale.y;
+
+        Vector3 rotatedTileScale = tileScale;
+
+        if (newDoorway.borderTransform.up != Vector3.up && newDoorway.borderTransform.up != Vector3.down)
+        {
+            rotatedTileScale = new Vector3(tileScale.y, tileScale.x, tileScale.z);
+        }
 
         switch (oldDoorway.side)
         {
             case DoorwaySide.North:
-                offset.y += 0.25f;
+                offset.y += (doorwayWidthOffset);// + (rotatedTileScale.y / 2.0f));
                 break;
             case DoorwaySide.East:
-                offset.x += 0.25f;
+                offset.x += (doorwayWidthOffset);// + (rotatedTileScale.x / 2.0f));
                 break;
             case DoorwaySide.South:
-                offset.y -= 0.25f;
+                offset.y -= (doorwayWidthOffset);// + (rotatedTileScale.y / 2.0f));
                 break;
             case DoorwaySide.West:
-                offset.x -= 0.25f;
+                offset.x -= (doorwayWidthOffset);// + (rotatedTileScale.x / 2.0f));
                 break;
         }
 
@@ -175,24 +183,25 @@ public class DungeonGenerator : MonoBehaviour
         //Pick a random doorway to start with
         int doorwayIndex = Random.Range(0, newRoom.doorways.Count);
         Border chosenDoorway = newRoom.doorways[doorwayIndex];
-
+                
         for (attempts = 0; attempts < newRoom.doorways.Count; attempts++)
         {
+            
             //Rotate
             float targetZRotation = this.GetTargetRotation(targetDoorway.side, chosenDoorway.side);
             Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, targetZRotation);
             newRoom.roomTransform.rotation = targetRotation;
 
             //Translate
-            Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway);
+            Vector3 moveOffset = this.GetMoveOffset(targetDoorway, chosenDoorway, newRoom.floorPrefabScale);
             newRoom.roomTransform.localPosition += moveOffset;
-
+            
             //Update AABB
             newRoom.UpdateAABBBounds();
 
             //Update Doorway Sides
             newRoom.UpdateDoorwaySides();
-
+            
             //Check for collision with all currently set rooms
             if (this.IsCollidingWithExistingRoom(newRoom) == true)
             {
@@ -203,7 +212,8 @@ public class DungeonGenerator : MonoBehaviour
             {
                 break;
             }
-        }
+            
+        }        
 
         if (attempts < newRoom.doorways.Count)
         {

@@ -6,8 +6,7 @@ public enum DoorwaySide { North = 0, East = -90, South = -180, West = 90}
 
 public class Border : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject wallObject;
+    public GameObject wallObject;
     [SerializeField]
     private GameObject doorwayObject;
     [SerializeField]

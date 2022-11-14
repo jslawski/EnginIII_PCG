@@ -8,7 +8,8 @@ public class Room : MonoBehaviour
 
     public Transform roomTransform;
 
-    private Vector3 floorPrefabScale;
+    [HideInInspector]
+    public Vector3 floorPrefabScale;
 
     [SerializeField]
     private GameObject floorPrefab;
@@ -23,6 +24,9 @@ public class Room : MonoBehaviour
     public List<Border> doorways;
 
     public List<Transform> floorTransforms;
+
+    //private float randomTileScaleX;
+    //private float randomTileScaleY;
 
     //AABB Variables
     [HideInInspector]
@@ -39,7 +43,10 @@ public class Room : MonoBehaviour
         this.doorways = new List<Border>();
         this.floorTransforms = new List<Transform>();
 
-        this.floorPrefabScale = this.floorPrefab.GetComponent<Transform>().lossyScale;
+        float randomTileScaleX = Random.Range(this.roomData.minMaxTileScaleX[0], this.roomData.minMaxTileScaleX[1] + 1);
+        float randomTileScaleY = Random.Range(this.roomData.minMaxTileScaleY[0], this.roomData.minMaxTileScaleY[1] + 1);
+
+        this.floorPrefabScale = new Vector3(randomTileScaleX, randomTileScaleY, 1.0f);
 
         this.CreateFloors();
         this.CreateBorders();
@@ -57,7 +64,9 @@ public class Room : MonoBehaviour
                     new Vector3((j * this.floorPrefabScale.x), -(i * this.floorPrefabScale.y), 0.0f);
 
                 GameObject floorInstance = Instantiate(this.floorPrefab, instantiationPosition, new Quaternion(), this.floorParentTransform);
-                this.floorTransforms.Add(floorInstance.GetComponent<Transform>());
+                Transform floorTransform = floorInstance.GetComponent<Transform>();
+                floorTransform.localScale = this.floorPrefabScale;
+                this.floorTransforms.Add(floorTransform);
             }
         }
     }
@@ -195,10 +204,20 @@ public class Room : MonoBehaviour
         }
 
         //Account for size of floor
-        this.minXPos -= (this.floorPrefabScale.x / 2.0f);
-        this.maxXPos += (this.floorPrefabScale.x / 2.0f);
-        this.minYPos -= (this.floorPrefabScale.y / 2.0f);
-        this.maxYPos += (this.floorPrefabScale.y / 2.0f);
+        if (this.roomTransform.up == Vector3.up || this.roomTransform.up == Vector3.down)
+        {
+            this.minXPos -= (this.floorPrefabScale.x / 2.0f);
+            this.maxXPos += (this.floorPrefabScale.x / 2.0f);
+            this.minYPos -= (this.floorPrefabScale.y / 2.0f);
+            this.maxYPos += (this.floorPrefabScale.y / 2.0f);
+        }
+        else
+        {
+            this.minXPos -= (this.floorPrefabScale.y / 2.0f);
+            this.maxXPos += (this.floorPrefabScale.y / 2.0f);
+            this.minYPos -= (this.floorPrefabScale.x / 2.0f);
+            this.maxYPos += (this.floorPrefabScale.x / 2.0f);
+        }
     }
 
     public bool CollidesWithRoom(Room checkRoom)
