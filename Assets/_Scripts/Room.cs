@@ -22,10 +22,8 @@ public class Room : MonoBehaviour
 
     public List<Border> doorways;
 
+    public List<FloorTile> floorTiles;
     public List<Transform> floorTransforms;
-
-    //private float randomTileScaleX;
-    //private float randomTileScaleY;
 
     //AABB Variables
     [HideInInspector]
@@ -36,6 +34,9 @@ public class Room : MonoBehaviour
     public float minYPos;
     [HideInInspector]
     public float maxYPos;
+
+    public bool isFinalRoom = false;
+    public bool containsKey = false;
 
     public void CreateRoom()
     {
@@ -66,6 +67,10 @@ public class Room : MonoBehaviour
                 Transform floorTransform = floorInstance.GetComponent<Transform>();
                 floorTransform.localScale = this.floorPrefabScale;
                 this.floorTransforms.Add(floorTransform);
+
+                FloorTile floorTile = floorInstance.GetComponent<FloorTile>();
+                floorTile.SetState(TileState.Empty);
+                this.floorTiles.Add(floorTile);
             }
         }
     }

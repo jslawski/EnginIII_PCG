@@ -17,9 +17,6 @@ public class Player : Creature
     public KeyCode attackKey = KeyCode.Space;
     public KeyCode interactKey = KeyCode.E;
 
-    [HideInInspector]
-    public int numHeldKeys = 0;
-
     protected override void Start()
     {
         base.Start();

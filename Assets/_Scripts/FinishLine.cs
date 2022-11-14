@@ -17,9 +17,6 @@ public class FinishLine : MonoBehaviour
 
     private float delayBetweenKeys = 0.3f;
 
-    [HideInInspector]
-    public int numRequiredKeys = 0;
-
     private void Start()
     {
         this.lockCanvas.SetActive(true);
@@ -28,17 +25,16 @@ public class FinishLine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.remainingKeys.text = this.numRequiredKeys.ToString();
+        this.remainingKeys.text = GameManager.totalKeys.ToString();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            this.collidingWithPlayer = true;
-            Player playerReference = collision.gameObject.GetComponent<Player>();
+            this.collidingWithPlayer = true;            
             this.StopAllCoroutines();
-            StartCoroutine(this.TakeKeys(playerReference));
+            StartCoroutine(this.TakeKeys());
 
         }
     }
@@ -51,14 +47,14 @@ public class FinishLine : MonoBehaviour
         }
     }
 
-    private IEnumerator TakeKeys(Player playerReference)
+    private IEnumerator TakeKeys()
     {
-        while (this.collidingWithPlayer && playerReference.numHeldKeys > 0)
+        while (this.collidingWithPlayer && GameManager.collectedKeys > 0)
         {
-            playerReference.numHeldKeys--;
-            this.numRequiredKeys--;
+            GameManager.collectedKeys--;
+            GameManager.totalKeys--;
 
-            if (this.numRequiredKeys <= 0)
+            if (GameManager.totalKeys <= 0)
             {
                 this.UnlockDoor();
                 break;
@@ -71,5 +67,6 @@ public class FinishLine : MonoBehaviour
     private void UnlockDoor()
     {
         this.borderParent.EnableDoorway();
+        this.lockCanvas.SetActive(false);
     }
 }

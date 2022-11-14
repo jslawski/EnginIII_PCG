@@ -22,9 +22,14 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField]
     private GameObject playerPrefab;
 
+    [SerializeField]
+    private GameObject keyPrefab;
+
     private RoomData[] allRoomData;    
 
     private Vector3 playerStartPoint = Vector3.zero;
+
+    private FinishLine finalDoor;
 
     public void GenerateDungeon()
     {
@@ -43,6 +48,8 @@ public class DungeonGenerator : MonoBehaviour
         this.SetStartAndEndPoints();
 
         this.SealUnusedDoorways();
+
+        this.SpawnKeys();
 
         this.SpawnPlayer();
     }
@@ -288,17 +295,54 @@ public class DungeonGenerator : MonoBehaviour
         Transform randomTileTransform = startingRoom.floorTransforms[Random.Range(0, startingRoom.floorTransforms.Count)];
         this.playerStartPoint = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
 
-        //Set the finish line to be an open doorway in the last room that was generated
-        Room endingRoom = this.GetFurthestRoom();
+        //Change the open doorway in the last room that was generated to a locked finish door
+        Room endingRoom = this.allRooms[this.allRooms.Count - 1];
         for (int i = 0; i < endingRoom.doorways.Count; i++)
         {
             if (endingRoom.doorways[i].connectedToRoom == true)
             {
+                endingRoom.isFinalRoom = true;
                 endingRoom.doorways[i].EnableFinishLine();
                 endingRoom.doorways[i].name = "FinishLine";
+                this.finalDoor = endingRoom.doorways[i].GetComponentInChildren<FinishLine>();
                 break;
             }
         }
+    }
+
+    private void SpawnKeyInRoom(Room spawnRoom)
+    {
+        int randomTileIndex = Random.Range(0, spawnRoom.floorTiles.Count);
+        Transform randomTileTransform = spawnRoom.floorTransforms[randomTileIndex];
+        FloorTile randomTile = spawnRoom.floorTiles[randomTileIndex];
+        Vector3 instantiationPosition = new Vector3(randomTileTransform.position.x, randomTileTransform.position.y, -0.5f);
+        Instantiate(this.keyPrefab, instantiationPosition, new Quaternion(), this.gameObject.GetComponent<Transform>());
+        randomTile.SetState(TileState.Key);
+    }
+
+    private void SpawnKeys()
+    {
+        //Determine how many keys will span based on the size of the dungeon
+        int minNumKeysToSpawn = (this.allRooms.Count / 3);
+        int maxNumKeysToSpawn = (this.allRooms.Count / 2);
+        int keysToSpawn = Random.Range(minNumKeysToSpawn, maxNumKeysToSpawn);
+
+        int currentKeyCount = 0;
+
+        while (currentKeyCount < keysToSpawn)
+        {
+            //Exclude the starting room
+            Room randomRoom = this.allRooms[Random.Range(1, this.allRooms.Count)];
+            if (randomRoom.isFinalRoom == true || randomRoom.containsKey == true)
+            {
+                continue;
+            }
+
+            this.SpawnKeyInRoom(randomRoom);
+            currentKeyCount++;
+        }
+
+        GameManager.totalKeys = keysToSpawn;        
     }
 
     private void SpawnPlayer()

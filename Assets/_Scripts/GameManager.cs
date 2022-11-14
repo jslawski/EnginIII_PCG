@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private DungeonGenerator generator;
 
-    public static int playerKeys = 0;
+    public static int collectedKeys = 0;
+    public static int totalKeys = 0;
 
     private void Start()
     {
