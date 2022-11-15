@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3902592242363390115}
   - component: {fileID: 2715017230321167954}
   - component: {fileID: 3770827202316856245}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FinishLineObject
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -50,7 +50,6 @@ MonoBehaviour:
   borderParent: {fileID: 6677538179400885621}
   remainingKeys: {fileID: 7121916745906222247}
   lockCanvas: {fileID: 3469732990797741588}
-  numRequiredKeys: 5
 --- !u!33 &3902592242363390115
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -126,7 +125,7 @@ GameObject:
   - component: {fileID: 2507606723839838556}
   - component: {fileID: 1595381238630323041}
   - component: {fileID: 7895449706893865322}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -498,7 +497,7 @@ GameObject:
   - component: {fileID: 2984171302791434621}
   - component: {fileID: 4164811298782330591}
   - component: {fileID: 163373835713942831}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ClampWall1
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -656,7 +655,7 @@ GameObject:
   - component: {fileID: 4022644445043384745}
   - component: {fileID: 4763672806454125193}
   - component: {fileID: 284430117218474321}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ClampWall2
   m_TagString: Wall
   m_Icon: {fileID: 0}

@@ -38,8 +38,6 @@ public class Creature : MonoBehaviour
 
     private Animator creatureAnimator;
 
-    private TextMeshProUGUI hpText;
-
     [HideInInspector]
     public GrabbableWeapon weaponPickupCandidate;
 
@@ -66,8 +64,6 @@ public class Creature : MonoBehaviour
         this.creatureAnimator = GetComponent<Animator>();
 
         this.currentHitPoints = this.totalHitPoints;
-
-        this.hpText = GetComponentInChildren<TextMeshProUGUI>(true);
 
         this.creatureRb = GetComponent<Rigidbody>();
 
@@ -96,16 +92,6 @@ public class Creature : MonoBehaviour
 
     protected virtual void Update()
     {
-        this.hpText.text = ("HP: " + this.currentHitPoints);
-
-        Vector3 adjustedPosition =
-            new Vector3(this.gameObject.transform.position.x,
-            this.gameObject.transform.position.y + 1.5f,
-            -0.5f);
-
-        this.hpText.transform.parent.transform.parent.position = adjustedPosition;
-        this.hpText.transform.parent.transform.parent.rotation = Quaternion.identity;
-
         if (this.currentHitPoints <= 0)
         {
             this.Die();
