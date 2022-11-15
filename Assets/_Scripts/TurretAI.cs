@@ -16,7 +16,7 @@ public class TurretAI : MonoBehaviour
 
     private Coroutine shootCoroutine;
 
-    private float shootDelay = 0.5f;
+    private float shootDelay = 0.65f;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +49,12 @@ public class TurretAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.dungeonComplete == true)
+        {
+            this.StopAllCoroutines();
+            return;
+        }
+
         if (this.targetTransform != null)
         {
             if (this.TargetIsInLineOfSight())
@@ -59,6 +65,10 @@ public class TurretAI : MonoBehaviour
                 {
                     this.shootCoroutine = StartCoroutine(this.Shoot());
                 }
+            }
+            else
+            {
+                this.StopAllCoroutines();
             }
         }
     }

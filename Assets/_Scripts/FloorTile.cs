@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TileState { Empty, Lava, Wall, Key, None }
+public enum TileState { Empty, Lava, Wall, Key, Turret, None }
 
 public class FloorTile : MonoBehaviour
 {
@@ -38,6 +38,7 @@ public class FloorTile : MonoBehaviour
         {
             case TileState.Empty:
             case TileState.Key:
+            case TileState.Turret:
                 this.tileCollider.enabled = false;
                 this.tileRenderer.material = this.floorMaterial;
                 this.gameObject.tag = "Floor";

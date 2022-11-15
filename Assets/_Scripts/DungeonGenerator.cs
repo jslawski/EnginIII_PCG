@@ -27,6 +27,9 @@ public class DungeonGenerator : MonoBehaviour
     private GameObject keyPrefab;
 
     [SerializeField]
+    private GameObject turretPrefab;
+
+    [SerializeField]
     private GameObject goalPrefab;
 
     private RoomData[] allRoomData;    
@@ -58,7 +61,9 @@ public class DungeonGenerator : MonoBehaviour
         this.SealUnusedDoorways();
 
         this.SpawnKeys();
-        
+
+        this.SpawnTurrets();
+
         this.SpawnPlayer();
     }
 
@@ -537,6 +542,35 @@ public class DungeonGenerator : MonoBehaviour
 
                 this.SpawnLavaInRoom(this.allRooms[i], numLavaToSpawn);
             }
+        }
+    }
+
+    private void SpawnTurretsInRoom(Room spawnRoom, int numTurrets)
+    {
+        int currentTurretCount = 0;
+
+        while (currentTurretCount < numTurrets)
+        {
+            FloorTile randomTile = this.GetSafeFloorTile(spawnRoom);
+
+            Vector3 instantiationPosition = new Vector3(randomTile.tileTransform.position.x, randomTile.tileTransform.position.y, -0.5f);
+            Instantiate(this.turretPrefab, instantiationPosition, new Quaternion(), this.gameObject.GetComponent<Transform>());
+            randomTile.SetState(TileState.Turret);
+
+            currentTurretCount++;
+        }
+    }
+
+    private void SpawnTurrets()
+    {
+        //Do not spawn turrets in the starting room
+        for (int i = 1; i < this.allRooms.Count; i++)
+        {
+            int minNumTurretsToSpawn = 0;
+            int maxNumTurretsToSpawn = this.GetSafeMaximum(this.allRooms[i].roomData.roomDimensions.x, this.allRooms[i].roomData.roomDimensions.y);
+            int numWallsToSpawn = Random.Range(minNumTurretsToSpawn, maxNumTurretsToSpawn);
+
+            this.SpawnTurretsInRoom(this.allRooms[i], numWallsToSpawn);
         }
     }
 
