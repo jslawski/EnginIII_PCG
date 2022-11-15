@@ -17,8 +17,6 @@ public class Creature : MonoBehaviour
     public int totalHitPoints = 100;
     public int currentHitPoints = 100;
 
-    public AttackZone attackZone;
-
     public delegate void EquipTrigger();
     public EquipTrigger onEquipTriggered;
 
@@ -64,9 +62,6 @@ public class Creature : MonoBehaviour
     {
         this.unarmedWeapon = Resources.Load<Weapon>("Equipment/Weapons/Unarmed");
         this.nakedArmor = Resources.Load<Armor>("Equipment/Armor/Naked");
-
-        this.attackZone = GetComponentInChildren<AttackZone>(true);
-        this.attackZone.Setup();
 
         this.creatureAnimator = GetComponent<Animator>();
 
@@ -190,8 +185,6 @@ public class Creature : MonoBehaviour
         this.equippedWeapon = newWeapon;
         this.equippedWeapon.Equip(this);
 
-        this.SetupAttackZone();
-
         if (this.equippedWeapon != this.unarmedWeapon)
         {
             this.creatureAudio.clip = Resources.Load<AudioClip>("Audio/Equip");
@@ -201,57 +194,12 @@ public class Creature : MonoBehaviour
         this.TriggerEquip();
     }
 
-    private void SetupAttackZone()
-    {
-        this.attackZone.gameObject.transform.localScale =
-            new Vector3(this.equippedWeapon.attackZoneDimensions.y,
-            this.equippedWeapon.attackZoneDimensions.x, 1.0f);
-
-        float adjustedXPosition = (this.attackZone.gameObject.transform.localScale.x / 2.0f) + 0.5f;
-
-        Vector3 adjustedPosition = new Vector3(adjustedXPosition,
-            this.attackZone.gameObject.transform.localPosition.y,
-            this.attackZone.gameObject.transform.localPosition.z);
-        
-        this.attackZone.gameObject.transform.localPosition = adjustedPosition;           
-    }
-
     private void Equip(Armor newArmor)
     {
         this.DropArmor();
         this.equippedArmor = newArmor;
         this.equippedArmor.Equip(this);
         this.TriggerEquip();
-    }
-
-    public virtual void Attack()
-    {
-        if (this.currentAttack != null)
-        {
-            return;
-        }
-
-        this.creatureAudio.clip = Resources.Load<AudioClip>("Audio/Attack");
-        this.creatureAudio.Play();
-
-        this.currentAttack = StartCoroutine(this.AttackCoroutine());
-        this.TriggerAttack();
-    }
-
-    private IEnumerator AttackCoroutine()
-    {
-        float elapsedAttackTime = 0.0f;
-
-        this.attackZone.EnableAttack();
-
-        while (elapsedAttackTime < this.attackDuration)
-        {
-            elapsedAttackTime += Time.fixedDeltaTime;
-            yield return new WaitForFixedUpdate();
-        }
-
-        this.attackZone.DisableAttack();
-        this.currentAttack = null;
     }
 
     public void TriggerEquip()
@@ -286,23 +234,12 @@ public class Creature : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(Creature attackingCreature, int damage, bool isDOTS)
+    public virtual void TakeDamage(int damage)
     {
-        if (isDOTS == true)
-        {
-            this.damageAudio.clip = Resources.Load<AudioClip>("Audio/DOT");
-            this.damageAudio.Play();
-        }
-        else
-        {
-            this.damageAudio.clip = Resources.Load<AudioClip>("Audio/Damage");
-            this.damageAudio.Play();
-        }
+        this.damageAudio.clip = Resources.Load<AudioClip>("Audio/Damage");
+        this.damageAudio.Play();
 
         this.currentHitPoints -= damage;
-        this.creatureAnimator.SetTrigger("DamagedTrigger");
-
-        this.TriggerDamageSelf(attackingCreature, damage);        
     }
 
     protected virtual void Die()

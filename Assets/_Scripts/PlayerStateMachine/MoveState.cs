@@ -26,10 +26,6 @@ public class MoveState : PlayerState
         {
             this.controller.ChangeState(new IdleState());
         }
-        else if (this.PressedAttackKey())
-        {
-            this.controller.ChangeState(new AttackState());
-        }
     }
 
     public override void FixedUpdateState()

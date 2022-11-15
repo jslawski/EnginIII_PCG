@@ -27,6 +27,11 @@ public class FloorTile : MonoBehaviour
     [HideInInspector]
     public TileState state = TileState.None;
 
+    private int lavaDamage = 5;
+    private float lavaDelay = 0.5f;
+
+    private Player player;
+
     private void UpdateState()
     {
         switch (this.state)
@@ -59,5 +64,33 @@ public class FloorTile : MonoBehaviour
     {
         this.state = newState;
         this.UpdateState();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player" && this.state == TileState.Lava)
+        {
+            this.player = other.gameObject.GetComponent<Player>();
+            this.StopAllCoroutines();
+            StartCoroutine(this.BurnPlayer());
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Player" && this.state == TileState.Lava)
+        {
+            this.player = null;
+            this.StopAllCoroutines();
+        }
+    }
+
+    private IEnumerator BurnPlayer()
+    {
+        while (this.player != null)
+        {
+            this.player.TakeDamage(this.lavaDamage);
+            yield return new WaitForSeconds(this.lavaDelay);
+        }
     }
 }
