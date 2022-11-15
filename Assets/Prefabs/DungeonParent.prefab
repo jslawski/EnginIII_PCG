@@ -47,6 +47,7 @@ MonoBehaviour:
   minRooms: 4
   maxRooms: 10
   addRoomSuccessChance: 0.5
+  lavaSpawnChance: 0.8
   parentTransform: {fileID: 9171216930010230969}
   baseRoomPrefab: {fileID: 7302397983163178631, guid: 1788daf25f17af14590578ba305de10b, type: 3}
   playerPrefab: {fileID: 1408111501548456521, guid: d3aeaa8c8252ad44e9fbc309b7209d43, type: 3}

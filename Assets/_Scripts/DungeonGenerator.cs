@@ -375,27 +375,33 @@ public class DungeonGenerator : MonoBehaviour
         GameManager.totalKeys = keysToSpawn;        
     }
 
+    //Avoid spawning things on the borders of rooms, to prevent blocking a doorway
+    private FloorTile GetSafeFloorTile(Room spawnRoom)
+    {
+        int randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
+        int randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
+        int randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
+
+        FloorTile randomTile = spawnRoom.floorTiles[randomTileIndex];
+
+        while (randomTile.state != TileState.Empty)
+        {
+            randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
+            randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
+            randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
+            randomTile = spawnRoom.floorTiles[randomTileIndex];
+        }
+
+        return randomTile;
+    }
+
     private void SpawnWallsInRoom(Room spawnRoom, int numWalls)
     {
         int currentWallCount = 0;
         
         while (currentWallCount < numWalls)
-        {
-            //Avoid spawning walls on the borders of the room, to prevent blocking a doorway
-            int randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
-            int randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
-            int randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
-            
-            FloorTile randomTile = spawnRoom.floorTiles[randomTileIndex];
-
-            while (randomTile.state != TileState.Empty)
-            {
-                randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
-                randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
-                randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
-                randomTile = spawnRoom.floorTiles[randomTileIndex];
-            }
-
+        {            
+            FloorTile randomTile = this.GetSafeFloorTile(spawnRoom);
             randomTile.SetState(TileState.Wall);
 
             currentWallCount++;
@@ -428,21 +434,105 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    private FloorTile GetRandomEmptyAdjacentTile(Room spawnRoom, FloorTile targetTile)
+    {
+        int targetTileIndex = spawnRoom.floorTiles.IndexOf(targetTile);
+
+        int attempts = 0;
+
+        while (attempts < 10)
+        {
+            int cardinalDirection = Random.Range(0, 4);
+            //North
+            if (cardinalDirection == 0)
+            {
+                int northIndex = targetTileIndex - spawnRoom.roomData.roomDimensions.x;
+                if (northIndex > 0)
+                {
+                    if (spawnRoom.floorTiles[northIndex].state == TileState.Empty)
+                    {
+                        return spawnRoom.floorTiles[northIndex];
+                    }
+                }
+            }
+            //East
+            else if (cardinalDirection == 1)
+            {
+                if ((targetTileIndex + 1) % spawnRoom.roomData.roomDimensions.x != 0)
+                {
+                    if (spawnRoom.floorTiles[targetTileIndex + 1].state == TileState.Empty)
+                    {
+                        return spawnRoom.floorTiles[targetTileIndex + 1];
+                    }
+                }
+            }
+            //South
+            else if (cardinalDirection == 2)
+            {
+                int southIndex = targetTileIndex + spawnRoom.roomData.roomDimensions.x;
+                if (southIndex < spawnRoom.floorTiles.Count)
+                {
+                    if (spawnRoom.floorTiles[southIndex].state == TileState.Empty)
+                    {
+                        return spawnRoom.floorTiles[southIndex];
+                    }
+                }
+            }
+            //West
+            else if (cardinalDirection == 3)
+            {
+                if (targetTileIndex % spawnRoom.roomData.roomDimensions.x != 0)
+                {
+                    if (spawnRoom.floorTiles[targetTileIndex - 1].state == TileState.Empty)
+                    {
+                        return spawnRoom.floorTiles[targetTileIndex - 1];
+                    }
+                }
+            }
+
+            attempts++;
+        }
+
+        return null;
+    }
+
     private void SpawnLavaInRoom(Room spawnRoom, int numLava)
     {
+        List<FloorTile> currentLavaTiles = new List<FloorTile>();
+        int attempts = 0;
 
+        //Spawn first lava tile        
+        FloorTile randomTile = this.GetSafeFloorTile(spawnRoom);
+        randomTile.SetState(TileState.Lava);
+        currentLavaTiles.Add(randomTile);
+
+        //Attempt to spawn numLava lava tiles by branching off of tiles that have already spawned
+        while (attempts < 20 && currentLavaTiles.Count < numLava)
+        {
+            FloorTile randomCurrentTile = currentLavaTiles[Random.Range(0, currentLavaTiles.Count)];
+            FloorTile adjacentTile = this.GetRandomEmptyAdjacentTile(spawnRoom, randomCurrentTile);
+
+            if (adjacentTile == null)
+            {
+                attempts++;
+                continue;
+            }
+
+            adjacentTile.SetState(TileState.Lava);
+            currentLavaTiles.Add(adjacentTile);
+        }
     }
 
     private void SpawnLava()
     {
-
         //Potentially spawn lava in any room
         for (int i = 0; i < this.allRooms.Count; i++)
         {
             if (Random.Range(0.0f, 1.0f) < this.lavaSpawnChance)
             {
-                int minNumLavaToSpawn = 0;
                 int maxNumLavaToSpawn = this.GetSafeMaximum(this.allRooms[i].roomData.roomDimensions.x, this.allRooms[i].roomData.roomDimensions.y);
+                int minNumLavaToSpawn = (maxNumLavaToSpawn / 2);
+                
                 int numLavaToSpawn = Random.Range(minNumLavaToSpawn, maxNumLavaToSpawn);
 
                 this.SpawnLavaInRoom(this.allRooms[i], numLavaToSpawn);
