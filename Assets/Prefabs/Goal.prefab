@@ -189,7 +189,7 @@ AudioSource:
   m_GameObject: {fileID: 1259320676067308604}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -7293659541027987180, guid: a28fe4f21fd733f47b70be753d64f98d, type: 2}
   m_audioClip: {fileID: 8300000, guid: c97050b0687149a408e7328b79bc5554, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -372,7 +372,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.20439367}
   m_AnchorMax: {x: 1, y: 0.31100002}
-  m_AnchoredPosition: {x: 0.5, y: -2}
+  m_AnchoredPosition: {x: 0.5, y: -2.0000076}
   m_SizeDelta: {x: -1, y: -8.120911}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1259320677088583384
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press esc to exit
+  m_text: Press Enter to start next dungeon
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 857d847890c7f3c439bfa0d9dd106aa4, type: 2}
   m_sharedMaterial: {fileID: 4343960959361157326, guid: 857d847890c7f3c439bfa0d9dd106aa4, type: 2}
@@ -430,7 +430,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40.4
+  m_fontSize: 26.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -565,7 +565,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 84.5
+  m_fontSize: 97.55
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

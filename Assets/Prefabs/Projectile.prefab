@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44bbb91e8359f8a48a301622c623ea68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileVelocity: 5
   projectileRb: {fileID: 6256836294289189882}
 --- !u!33 &5892242602829415897
 MeshFilter:

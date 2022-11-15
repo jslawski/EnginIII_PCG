@@ -17,9 +17,13 @@ public class FinishLine : MonoBehaviour
 
     private float delayBetweenKeys = 0.3f;
 
+    private AudioSource finishLineAudio;
+
     private void Start()
     {
         this.lockCanvas.SetActive(true);
+
+        this.finishLineAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -49,6 +53,8 @@ public class FinishLine : MonoBehaviour
 
     private IEnumerator TakeKeys()
     {
+        this.finishLineAudio.clip = Resources.Load<AudioClip>("Audio/use");
+
         while (this.collidingWithPlayer && GameManager.collectedKeys > 0)
         {
             GameManager.collectedKeys--;
@@ -60,6 +66,8 @@ public class FinishLine : MonoBehaviour
                 break;
             }
 
+            this.finishLineAudio.Play();
+            
             yield return new WaitForSeconds(this.delayBetweenKeys);
         }
     }

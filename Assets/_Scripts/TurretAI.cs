@@ -18,11 +18,14 @@ public class TurretAI : MonoBehaviour
 
     private float shootDelay = 0.65f;
 
+    private AudioSource shootAudio;
+
     // Start is called before the first frame update
     void Start()
     {
         this.turretTransform = GetComponent<Transform>();
         this.triggerZone = GetComponent<SphereCollider>();
+        this.shootAudio = GetComponent<AudioSource>();
     }
 
     private bool TargetIsInLineOfSight()
@@ -80,6 +83,8 @@ public class TurretAI : MonoBehaviour
             //Launch projectile
             GameObject projectileInstance = Instantiate(this.projectilePrefab, this.turretTransform.position, new Quaternion());
             projectileInstance.GetComponent<Projectile>().Launch((this.targetTransform.position - this.turretTransform.position).normalized);
+
+            this.shootAudio.Play();
 
             //Wait for next shot
             yield return new WaitForSeconds(this.shootDelay);

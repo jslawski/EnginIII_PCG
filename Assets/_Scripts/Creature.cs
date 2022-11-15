@@ -5,6 +5,9 @@ using TMPro;
 
 public class Creature : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject deathScreen;
+
     [Header("Creature Attributes")]
     [SerializeField]
     private Weapon startingWeapon;
@@ -222,17 +225,23 @@ public class Creature : MonoBehaviour
 
     public virtual void TakeDamage(int damage)
     {
-        this.damageAudio.clip = Resources.Load<AudioClip>("Audio/Damage");
+        this.damageAudio.clip = Resources.Load<AudioClip>("Audio/damaged");
         this.damageAudio.Play();
+
+        this.creatureAnimator.SetTrigger("DamagedTrigger");
 
         this.currentHitPoints -= damage;
     }
 
     protected virtual void Die()
     {
-        this.creatureAudio.clip = Resources.Load<AudioClip>("Audio/Die");
+        this.creatureAudio.clip = Resources.Load<AudioClip>("Audio/die");
         this.creatureAudio.Play();
 
-        Destroy(this.gameObject);
+        this.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        this.gameObject.GetComponent<Collider>().enabled = false;
+        this.enabled = false;
+
+        this.deathScreen.SetActive(true);
     }    
 }
