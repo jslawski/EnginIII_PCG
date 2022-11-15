@@ -106,6 +106,7 @@ public class TurretAI : MonoBehaviour
         if (other.tag == "Player")
         {
             this.targetTransform = null;
+            this.shootCoroutine = null;
         }
     }
 }
