@@ -389,12 +389,15 @@ public class DungeonGenerator : MonoBehaviour
 
         FloorTile randomTile = spawnRoom.floorTiles[randomTileIndex];
 
-        while (randomTile.state != TileState.Empty)
+        int attempts = 0;
+
+        while (randomTile.state != TileState.Empty && attempts < 10)
         {
             randomTileIndexX = Random.Range(1, spawnRoom.roomData.roomDimensions.x - 1);
             randomTileIndexY = Random.Range(1, spawnRoom.roomData.roomDimensions.y - 1);
             randomTileIndex = randomTileIndexX + (spawnRoom.roomData.roomDimensions.x * randomTileIndexY);
             randomTile = spawnRoom.floorTiles[randomTileIndex];
+            attempts++;
         }
 
         return randomTile;
@@ -402,8 +405,8 @@ public class DungeonGenerator : MonoBehaviour
 
     private void SpawnWallsInRoom(Room spawnRoom, int numWalls)
     {
-        int currentWallCount = 0;
-        
+        int currentWallCount = 0;        
+
         while (currentWallCount < numWalls)
         {            
             FloorTile randomTile = this.GetSafeFloorTile(spawnRoom);
